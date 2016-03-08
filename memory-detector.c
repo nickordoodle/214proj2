@@ -14,12 +14,15 @@ static int wasInit = 0;
 
    How to store "struct" in our memory or char array, "treat char array as struct array"
 
-   Beginning of next struct is equal to size of mementry + size of data.
+   Beginning of newEntry struct is equal to size of mementry + size of data.
 
    If you add to pointer, you are adding the size of pointer type 
    So Mementrypointer + 1 adds the size of another mementry
 
    ((char*)construct + 1) + 10
+
+   SPECIAL CODE??
+   HOW TO IDENTIFY THE SAME OBJECTS?
 
    Combine two adjacent free blocks by readjusting pointers, dont combine if they aren't free however*/
 
@@ -36,89 +39,101 @@ void setMemEntryValues(MemEntry *entry, unsigned int size){
    entry->size = size;
 }
 
-/* CONDITIONS TO CHECK FOR: NO SPACE, FREE SPACE BUT NOT ENOUGH ROOM */
-int insertMemEntry(MemEntry *newEntry, MemEntry *blockPtr){
+void *sliceMemEntry(unsigned int size, MemEntry *currMem){
 
-   MemEntry *curr = blockPtr;
-   MemEntry *next = curr->next;
+   MemEntry *newEntry = (MemEntry *)((char*)currMem + sizeof(MemEntry) + size);
+   newEntry->prev = currMem;                  
+   newEntry->next = currMem->next;         
+   if(currMem->next != NULL)                    
+      currMem->next->prev = newEntry;               
+   currMem->next = newEntry;                 
+   newEntry->size = currMem->size - sizeof(MemEntry) - size;  
+   newEntry->isFree = 1;                   
+   currMem->size = size;            
+   currMem->isFree = 0; 
 
-   while(curr != NULL){
+   return newEntry;
 
-      /* Make sure there is enough room for new memory allocation */
-      if ( curr->isFree && curr->size >= (newEntry->size + sizeof(MemEntry))){
-
-         next = (MemEntry *)((char*)curr + sizeof(MemEntry) + newEntry->size);
-         next->prev = curr;                  
-         next->next = curr->next;         
-         if(curr->next != NULL)                    
-            curr->next->prev = next;               
-         curr->next = next;                 
-         curr->size = curr->size - sizeof(MemEntry) - newEntry->size;  
-         curr->isFree = 1;                   
-         curr->size = newEntry->size;            
-         curr->isFree = 0; 
-         return 1;
-      }
-      
-      /* Move current MemEntry to the next free space */
-      curr = next;
-
-   }
-
-     //return (char*)p + sizeof(MemEntry);    //returns the allocated chunk, but not the header of the allocated chunk.
-
-
-   return 0;
 }
 
-void * mymalloc(unsigned int size, char * file, int line){
+/* CONDITIONS TO CHECK FOR: NO SPACE, FREE SPACE BUT NOT ENOUGH ROOM */
+void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line){
 
-   /* Check if program was initialized */
-   if(wasInit){
+   MemEntry *currMem = blockPtr;
 
-      /* Execute normal code */
-      MemEntry *newEntry = {0};
-      setMemEntryValues(newEntry, size);
+   do{
+      
+      /* Make sure there is enough room for new memory allocation */
+      if ( currMem->isFree && currMem->size >= (size + sizeof(MemEntry))){
 
-      if(size < 50 ){
-
-         /* Use small blocksck */
-         insertMemEntry(newEntry, smallMemPtr);
-
-      } else if(size > 50 ){
-
-         /* Use big block */
-         insertMemEntry(newEntry, bigMemPtr);
+         /* Adjust/Cut memEntries to insert the new allocation */
+         printf("Successful malloc of size %d on line %d in file %s", size , line, file);
+         return sliceMemEntry(size, currMem);
 
       } else{
 
-         /* Failure, print error */
+         /* Move currMement MemEntry to the next entry */
+         currMem = currMem->next;
 
       }
+      
 
-   } else{
+   } while(currMem != NULL);
 
+   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s", size , line, file);
+
+   return NULL;
+}
+
+void initGlobals(){
+
+   /* Set up the pointer to smaller memory allocations */
+   smallMemPtr = (MemEntry *)memoryBlock;
+   smallMemPtr->prev = NULL;
+   smallMemPtr->next = NULL;
+   smallMemPtr->size = 2499;
+   smallMemPtr->isFree = 1;
+
+   /* Set up the pointer to bigger memory allocations */
+   bigMemPtr = (MemEntry *)(memoryBlock + 2499 + sizeof(MemEntry));
+   bigMemPtr->prev = NULL;   
+   bigMemPtr->next = NULL;   
+   bigMemPtr->size = 2499 - 2 * sizeof(MemEntry); 
+   bigMemPtr->isFree = 1;                  
+
+   /* Tell the program that we have already ran the program once and 
+      global variables were initialized */
+   wasInit = 1;        
+}
+
+/* Our own custom implementation of malloc.  Utilizes our memory which
+   is a char array called "block".  We use MemEntry structs to make 
+   allocating memory easier by casting char array locations to MemEntries.
+   Everytime mymalloc is called, check if globals were initialized, then
+   insert the memory allocation if possible based on its size. */
+
+void * mymalloc(unsigned int size, char * file, int line){
+
+
+   /* Check if program was initialized */
+   if(!wasInit){
+      
       /* Memory was not initialized yet, must initialize globals*/
+      initGlobals();
 
-      /* Set up the pointer to smaller memory allocations */
-      smallMemPtr = (MemEntry *)memoryBlock;
-      smallMemPtr->prev = NULL;
-      smallMemPtr->next = NULL;
-      smallMemPtr->size = 2500;
-      smallMemPtr->isFree = 1;
+   } 
 
-      /* Set up the pointer to bigger memory allocations */
-      bigMemPtr = (MemEntry *)(memoryBlock + 2500 + sizeof(MemEntry));
-      bigMemPtr->prev = NULL;   
-      bigMemPtr->next = NULL;   
-      bigMemPtr->size = 2500 - 2 * sizeof(MemEntry); 
-      bigMemPtr->isFree = 1;                  
+   if(size < 50 ){
 
-      /* Tell the program that we have already ran the program once and 
-         global variables were initialized */
-      wasInit = 1;              
+      /* Use small block */
+      return insertMemEntry(size, smallMemPtr, file, line);
 
-   }
+   } else if(size > 50 ){
+
+      /* Use big block */
+      return insertMemEntry(size, bigMemPtr, file, line);
+
+   } 
 
    /* Print error if conflicts exist */
    return NULL;

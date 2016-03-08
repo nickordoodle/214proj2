@@ -33,12 +33,12 @@ struct MemEntry
 
 void initMemEntry(MemEntry *entry);
 
-void * mymalloc(unsigned int size, char * file, int line);
+void initGlobals();
 
-int insertMemEntry(MemEntry *newEntry, MemEntry *blockPtr);
+void * mymalloc(unsigned int size, char *file, int line);
+
+void *sliceMemEntry(unsigned int size, MemEntry *currMem);
+
+void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line);
 
 void myfree(void * p, char * file, int line);
-
-int memoryAlreadyExists();
-
-int enoughMemory();
