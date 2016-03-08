@@ -1,7 +1,7 @@
-
 #include <stdlib.h>
 #include <stdio.h>
-/* Functions to be implemented */
+
+
 #define malloc( x ) mymalloc( x, __FILE__, __LINE__ );
 #define free( x ) myfree( x, __FILE__, __LINE__ );
 /* DO I MALLOC THIS OR USE STACK */
@@ -21,12 +21,12 @@ Account for freeing pointers to memory, preserve linked list
 */
 
 /* Will this be useful? */
-typedef struct mementry	mementry;
-struct mementry
+typedef struct MemEntry	MemEntry;
+struct MemEntry
 {
 
-	mementry *next;
-	mementry *prev;
+	MemEntry *next;
+	MemEntry *prev;
 	unsigned int size;
 	int isFree;
 };
@@ -34,6 +34,8 @@ struct mementry
 void initMemEntry(MemEntry *entry);
 
 void * mymalloc(unsigned int size, char * file, int line);
+
+int insertMemEntry(MemEntry *newEntry, MemEntry *blockPtr);
 
 void myfree(void * p, char * file, int line);
 
