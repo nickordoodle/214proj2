@@ -140,9 +140,58 @@ void * mymalloc(unsigned int size, char * file, int line){
    return NULL;
 }
 
-void * myfree(void * toFree, char * file, int line){
-	
-	
+int isPointer(void * toFree){
+        MemEntry * toCheck = (MemEntry*)toFree - 1;
+        toCheck = toCheck - 1;
+        if(toCheck -> isMemEntry == SPECIALCODE)
+                return 1;
+
+        return 0;
+}
+
+void checkForAdjFreed(MemEntry * toCheck){
+        int toAdd;
+        /*dealing with prev*/
+        if(toCheck-> prev != NULL){
+                if(toCheck -> prev -> isFree = 1){
+                        toAdd = toCheck->size + sizeof(MemEntry);
+                        toCheck = toCheck -> prev;
+                        toCheck -> size += toAdd;
+
+                        toCheck -> next = toCheck -> next -> next;
+                        if(toCheck -> next != NULL)
+                                toCheck-> next -> prev = toCheck;
+                }
+        }
+
+        if(toCheck-> next != NULL){
+                if(toCheck -> next -> isFree = 1){
+                        toAdd = toCheck->next->size  + sizeof(MemEntry);
+                        toCheck -> size += toAdd;
+
+                        toCheck -> next = toCheck -> next -> next;
+                        if(toCheck -> next != NULL)
+                                toCheck-> next -> prev = toCheck;
+                }
+        }
+}
+
+
+int  myfree(void * toFree, char * file, int line){
+        MemEntry * ptrToFree = NULL;
+
+        /*out of range check*/
+        if(&toFree - sizeof(MemEntry) <= &smallMemPtr && &toFree >= &smallMemPtr + 5000 - sizeof(MemEntry))
+                return 0;
+
+        if(!isPointer(toFree));
+                return 0;
+
+        ptrToFree = (MemEntry *)toFree;
+
+        checkForAdjFreed(ptrToFree);
+        return 1;
+
 }
 
 int main(int argc, char const *argv[]) {
