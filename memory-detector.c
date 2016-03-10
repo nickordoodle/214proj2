@@ -181,7 +181,7 @@ int  myfree(void * toFree, char * file, int line){
         MemEntry * ptrToFree = NULL;
 
         /*out of range check*/
-        if(&toFree - sizeof(MemEntry) <= &smallMemPtr && &toFree >= &smallMemPtr + 5000 - sizeof(MemEntry))
+if((char*)toFree - sizeof(MemEntry) <= (char*)smallMemPtr && (char*)toFree >= (char*)smallMemPtr + 5000 - sizeof(MemEntry))
                 return 0;
 
         if(!isPointer(toFree));
