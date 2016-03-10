@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#define SPECIALCODE 12345
+
 
 
 #define malloc( x ) mymalloc( x, __FILE__, __LINE__ );
@@ -29,6 +31,7 @@ struct MemEntry
 	MemEntry *prev;
 	unsigned int size;
 	int isFree;
+	int isMemEntry;
 };
 
 void initMemEntry(MemEntry *entry);
