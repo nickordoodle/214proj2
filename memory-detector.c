@@ -36,6 +36,7 @@ void setMemEntryValues(MemEntry *entry, unsigned int size){
 	entry->prev = NULL;
 	entry->next = NULL;
 	entry->isFree = 1;
+	entry->isMementry = SPECIALCODE;
    entry->size = size;
 }
 
@@ -139,7 +140,10 @@ void * mymalloc(unsigned int size, char * file, int line){
    return NULL;
 }
 
-
+void * myfree(void * toFree, char * file, int line){
+	
+	
+}
 
 int main(int argc, char const *argv[]) {
 
