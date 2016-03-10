@@ -44,4 +44,4 @@ void *sliceMemEntry(unsigned int size, MemEntry *currMem);
 
 void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line);
 
-void myfree(void * p, char * file, int line);
+int myfree(void * p, char * file, int line);
