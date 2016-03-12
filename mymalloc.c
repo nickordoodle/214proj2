@@ -194,7 +194,44 @@ if((char*)toFree - sizeof(MemEntry) <= (char*)smallMemPtr && (char*)toFree >= (c
 
 }
 
+int testLL(){
+        int count = 0;
+        MemEntry * currEntry = smallMemPtr;
+        while(currEntry->next != NULL){
+                printf("MemEntry %d space:%d free:%d\n",count,currEntry->size,currEntry->isFree);
+                currEntry = currEntry->next;
+                count++;
+        }
+        printf("End of memory\n");
+        return 0;
+}
+
 int main(int argc, char const *argv[]) {
+   int i = 0;
+    char * testArray [50];
+        for(i = 0;i < sizeof(testArray)/sizeof(testArray[0]);i++)
+                testArray[i] = NULL;
+
+        i = 0;
+        testArray[i] = (char*)malloc(18);
+        testArray[i]= "12345678901234567";
+        while(testArray[i] != NULL){
+                i++;
+                testArray[i] =(char*)malloc(18);
+                if(testArray[i] !=NULL){
+                        testArray[i]= "12345678901234567";
+                }
+        }
+        printf("\n");
+        testLL();
+
+        for(i = 0;i < sizeof(testArray)/sizeof(testArray[0]);i++)
+                printf("Mem number %d: %s\n",i,testArray[i]);
+
+        free(testArray[0]);
+
+        testArray[i] = malloc(18);
+	testArray[i]= "12345678901234567";
 
    printf("%d\n", memoryBlock[0]);
 
