@@ -1,2 +1,2 @@
-memorydetector: memory-detector.c
-	gcc -Wall -g -o memorydetector memory-detector.c 
+mymalloc: mymalloc.c
+	gcc -Wall -g -o mymalloc mymalloc.c 
