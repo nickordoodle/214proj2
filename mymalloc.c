@@ -53,7 +53,8 @@ void *sliceMemEntry(unsigned int size, MemEntry *currMem){
    currMem->size = size;            
    currMem->isFree = 0; 
 
-   return newEntry;
+   /* Return the "usable allocation space" of the malloc for the data to use */
+   return (char *)newEntry + sizeof(MemEntry);
 
 }
 
@@ -115,7 +116,7 @@ void initGlobals(){
 
 void * mymalloc(unsigned int size, char * file, int line){
 
-
+    void *result = 0;
    /* Check if program was initialized */
    if(!wasInit){
       
@@ -127,16 +128,21 @@ void * mymalloc(unsigned int size, char * file, int line){
    if(size < 50 ){
 
       /* Use small block */
-      return insertMemEntry(size, smallMemPtr, file, line);
+    result = insertMemEntry(size, smallMemPtr, file, line);
+    if(result != NULL)
+      return result;
 
    } else if(size > 50 ){
 
       /* Use big block */
-      return insertMemEntry(size, bigMemPtr, file, line);
+    result = insertMemEntry(size, bigMemPtr, file, line);
+    if(result != NULL)
+      return result;
 
    } 
 
    /* Print error if conflicts exist */
+   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s.  Not enough memory.", size , line, file);
    return NULL;
 }
 
