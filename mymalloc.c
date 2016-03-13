@@ -41,7 +41,7 @@ void setMemEntryValues(MemEntry *entry, unsigned int size){
 }
 
 void *sliceMemEntry(unsigned int size, MemEntry *currMem){
-
+	void * ptr = NULL;
    MemEntry *newEntry = (MemEntry *)((char*)currMem + sizeof(MemEntry) + size);
    newEntry->prev = currMem;                  
    newEntry->next = currMem->next;         
@@ -50,11 +50,12 @@ void *sliceMemEntry(unsigned int size, MemEntry *currMem){
    currMem->next = newEntry;                 
    newEntry->size = currMem->size - sizeof(MemEntry) - size;  
    newEntry->isFree = 1;                   
-   currMem->size = size;            
+   currMem->size = size;       
    currMem->isFree = 0; 
+   currMem->isMemEntry = SPECIALCODE;
+   ptr = (void*)(newEntry+1);
 
-   /* Return the "usable allocation space" of the malloc for the data to use */
-   return (char *)newEntry + sizeof(MemEntry);
+   return ptr;
 
 }
 
@@ -146,14 +147,15 @@ void * mymalloc(unsigned int size, char * file, int line){
    return NULL;
 }
 
-int isPointer(void * toFree){
-        MemEntry * toCheck = (MemEntry*)toFree - 1;
+void* isPointer(void * toFree){
+        MemEntry * toCheck = (MemEntry*)toFree;
         toCheck = toCheck - 1;
         if(toCheck -> isMemEntry == SPECIALCODE)
-                return 1;
+                return toCheck;
 
-        return 0;
+        return NULL;
 }
+
 
 void checkForAdjFreed(MemEntry * toCheck){
         int toAdd;
@@ -190,12 +192,17 @@ int  myfree(void * toFree, char * file, int line){
 if((char*)toFree - sizeof(MemEntry) <= (char*)smallMemPtr && (char*)toFree >= (char*)smallMemPtr + 5000 - sizeof(MemEntry))
                 return 0;
 
-        if(!isPointer(toFree));
+        ptrToFree = isPointer(toFree);
+        if(ptrToFree  == NULL);
                 return 0;
 
-        ptrToFree = (MemEntry *)toFree;
 
+        ptrToFree = (MemEntry *)toFree;
+	
+	ptrToFree->isFree = 1;
+	
         checkForAdjFreed(ptrToFree);
+        
         return 1;
 
 }
