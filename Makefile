@@ -42,3 +42,6 @@ test4.o: test4.c
 
 test4: mymalloc.o test4.o
 	$(COMPILER) $(CFLAGS) -o test4 test4.o mymalloc.o
+
+clean: 
+	rm -f *.o mymalloc test0 test1 test2 test3 test4

@@ -6,7 +6,6 @@
 
 #define malloc( x ) mymalloc( x, __FILE__, __LINE__ );
 #define free( x ) myfree( x, __FILE__, __LINE__ );
-/* DO I MALLOC THIS OR USE STACK */
 /* First half of memory will be dedicated to small data portions
    for a number TBD such as (< 25, etc.) and the second half on 
    the block (2500-5000) will be dedicated to bigger data portions
