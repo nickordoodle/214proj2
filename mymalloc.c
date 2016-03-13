@@ -198,7 +198,7 @@ void initGlobals(){
 		}
 	}
 
-
+	/*returns 1 if successful and 0 if unsuccessful*/
 	int  myfree(void * toFree, char * file, int line){
 		MemEntry * ptrToFree = NULL;
 
@@ -210,6 +210,9 @@ void initGlobals(){
 		ptrToFree = isPointer(toFree);
 		if(ptrToFree  == NULL)
 			return 0;
+		
+		if(ptrToFree->isFree == 1)
+                        return 0;
 
 		ptrToFree->isFree = 1;
 		
