@@ -83,7 +83,6 @@ void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line
 
    } while(currMem != NULL);
 
-   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s \n", size , line, file);
 
    return NULL;
 }
