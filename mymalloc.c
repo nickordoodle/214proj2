@@ -202,11 +202,10 @@ if((char*)toFree - sizeof(MemEntry) <= (char*)smallMemPtr && (char*)toFree >= (c
                 return 0;
 
         ptrToFree = isPointer(toFree);
-        if(ptrToFree  == NULL);
+        if(ptrToFree  == NULL)
                 return 0;
 
 
-        ptrToFree = (MemEntry *)toFree;
 	
 	ptrToFree->isFree = 1;
 	
