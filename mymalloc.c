@@ -69,7 +69,7 @@ void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line
       if ( currMem->isFree && currMem->size >= (size + sizeof(MemEntry))){
 
          /* Adjust/Cut memEntries to insert the new allocation */
-         printf("Successful malloc of size %d on line %d in file %s", size , line, file);
+         printf("Successful malloc of size %d on line %d in file %s \n", size , line, file);
          return sliceMemEntry(size, currMem);
 
       } else{
@@ -82,7 +82,7 @@ void *insertMemEntry(unsigned int size, MemEntry *blockPtr, char *file, int line
 
    } while(currMem != NULL);
 
-   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s", size , line, file);
+   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s \n", size , line, file);
 
    return NULL;
 }
@@ -142,7 +142,7 @@ void * mymalloc(unsigned int size, char * file, int line){
    } 
 
    /* Print error if conflicts exist */
-   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s.  Not enough memory.", size , line, file);
+   printf("UNSUCCESSFUL malloc of size %d on line %d in file %s.  Not enough memory. \n", size , line, file);
    return NULL;
 }
 
@@ -211,9 +211,13 @@ int testLL(){
         printf("End of memory\n");
         return 0;
 }
-
+/*
 int main(int argc, char const *argv[]) {
    int i = 0;
+
+   int *ptr = malloc(2400);
+   int *ptr2 = malloc(2600);
+   free(ptr);
     char * testArray [50];
         for(i = 0;i < sizeof(testArray)/sizeof(testArray[0]);i++)
                 testArray[i] = NULL;
@@ -242,4 +246,4 @@ int main(int argc, char const *argv[]) {
    printf("%d\n", memoryBlock[0]);
 
 	return 0;
-}
+} */
