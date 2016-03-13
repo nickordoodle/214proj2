@@ -67,7 +67,8 @@ static int wasInit = 0;
 	 
 	 currMem->isFree = 0; 
 	 
-	 ptr = (void*)(currMem + sizeof(MemEntry));
+	 currMem = currMem +1;
+	 ptr = (void*)currMem;
 
 	 return ptr;
 
@@ -109,13 +110,13 @@ void initGlobals(){
  smallMemPtr->next = NULL;
  smallMemPtr->size = 2499;
  smallMemPtr->isFree = 1;
-
+ smallMemPtr->isMemEntry = SPECIALCODE;
 	 /* Set up the pointer to bigger memory allocations */
  bigMemPtr = (MemEntry *)(memoryBlock + 2499 + sizeof(MemEntry));
  bigMemPtr->prev = NULL;   
  bigMemPtr->next = NULL;   
  bigMemPtr->size = 2499 - (2 * sizeof(MemEntry)); 
- bigMemPtr->isFree = 1;                  
+ bigMemPtr->isMemEntry = SPECIALCODE;                  
 
 	 /* Tell the program that we have already ran the program once and 
 			global variables were initialized */
@@ -229,39 +230,3 @@ void initGlobals(){
 		printf("End of memory\n");
 		return 0;
 	}
-/*
-int main(int argc, char const *argv[]) {
-	 int i = 0;
-
-	 int *ptr = malloc(2400);
-	 int *ptr2 = malloc(2600);
-	 free(ptr);
-		char * testArray [50];
-				for(i = 0;i < sizeof(testArray)/sizeof(testArray[0]);i++)
-								testArray[i] = NULL;
-
-				i = 0;
-				testArray[i] = (char*)malloc(18);
-				testArray[i]= "12345678901234567";
-				while(testArray[i] != NULL){
-								i++;
-								testArray[i] =(char*)malloc(18);
-								if(testArray[i] !=NULL){
-												testArray[i]= "12345678901234567";
-								}
-				}
-				printf("\n");
-				testLL();
-
-				for(i = 0;i < sizeof(testArray)/sizeof(testArray[0]);i++)
-								printf("Mem number %d: %s\n",i,testArray[i]);
-
-				free(testArray[0]);
-
-				testArray[i] = malloc(18);
-	testArray[i]= "12345678901234567";
-
-	 printf("%d\n", memoryBlock[0]);
-
-	return 0;
-} */
