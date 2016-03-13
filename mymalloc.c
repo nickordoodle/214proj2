@@ -67,7 +67,7 @@ static int wasInit = 0;
 	 
 	 currMem->isFree = 0; 
 	 
-	 ptr = (void*)(currMem + sizeof(Mementrypointer));
+	 ptr = (void*)(currMem + sizeof(MemEntry));
 
 	 return ptr;
 
@@ -217,6 +217,17 @@ void initGlobals(){
 		checkForAdjFreed(ptrToFree);
 		
 		return 1;
+        ptrToFree = isPointer(toFree);
+        if(ptrToFree  == NULL)
+                return 0;
+
+
+	
+		ptrToFree->isFree = 1;
+	
+        checkForAdjFreed(ptrToFree);
+        
+        return 1;
 
 	}
 
