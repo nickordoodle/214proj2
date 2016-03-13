@@ -205,29 +205,16 @@ void initGlobals(){
 		if((char*)toFree - sizeof(MemEntry) <= (char*)smallMemPtr && (char*)toFree >= (char*)smallMemPtr + 5000 - sizeof(MemEntry))
 			return 0;
 
+		/*isPointer returns correct MemEntry pointer or Null if it isnt a proper pointer*/
 		ptrToFree = isPointer(toFree);
-		if(ptrToFree  == NULL);
-		return 0;
+		if(ptrToFree  == NULL)
+			return 0;
 
-
-		ptrToFree = (MemEntry *)toFree;
-		
 		ptrToFree->isFree = 1;
 		
 		checkForAdjFreed(ptrToFree);
 		
 		return 1;
-        ptrToFree = isPointer(toFree);
-        if(ptrToFree  == NULL)
-                return 0;
-
-
-	
-		ptrToFree->isFree = 1;
-	
-        checkForAdjFreed(ptrToFree);
-        
-        return 1;
 
 	}
 
