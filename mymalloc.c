@@ -42,18 +42,27 @@ void setMemEntryValues(MemEntry *entry, unsigned int size){
 
 void *sliceMemEntry(unsigned int size, MemEntry *currMem){
 	void * ptr = NULL;
-   MemEntry *newEntry = (MemEntry *)((char*)currMem + sizeof(MemEntry) + size);
-   newEntry->prev = currMem;                  
-   newEntry->next = currMem->next;         
-   if(currMem->next != NULL)                    
-      currMem->next->prev = newEntry;               
-   currMem->next = newEntry;                 
-   newEntry->size = currMem->size - sizeof(MemEntry) - size;  
-   newEntry->isFree = 1;                   
-   currMem->size = size;       
+	int space = currMem->size;
+	MemEntry *newEntry;
+	if(space = size + sizeof(MemEntry)){
+		newEntry = (MemEntry *)((char*)currMem + sizeof(MemEntry) + size);
+		 
+		newEntry->size = space - sizeof(MemEntry) - size;  
+		newEntry->isFree = 1; 
+		newEntry->isMemEntry = SPECIALCODE;
+		
+		newEntry->prev = currMem;                  
+		newEntry->next = currMem->next; 
+		
+		if(currMem->next != NULL)                    
+			currMem->next->prev = newEntry;
+		currMem->next = newEntry;
+		currMem->size = size;
+	}
+                    
    currMem->isFree = 0; 
-   currMem->isMemEntry = SPECIALCODE;
-   ptr = (void*)(newEntry+1);
+   
+   ptr = (void*)(currMem+1);
 
    return ptr;
 
